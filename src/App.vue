@@ -1,22 +1,31 @@
 <template>
-  <h1>vue3标准模板</h1>
-  <ul>
-    <li>开箱即用</li>
-    <li>typescript</li>
-    <li>Vue3</li>
-    <li>支持 tsx</li>
-    <li>eslint</li>
-    <li>简单易用可扩展</li>
-  </ul>
+  <div class="homepage-container" v-if="withHeader">
+    <a-layout :style="{ background: '#FFF' }">
+      <a-layout-header class="header">
+        <router-link to="/">
+          <div class="page-title">Header</div>
+        </router-link>
+      </a-layout-header>
+      <a-layout-content class="home-layout">
+        <router-view></router-view>
+      </a-layout-content>
+      <a-layout-footer> Footer </a-layout-footer>
+    </a-layout>
+  </div>
+  <div class="homepage-container" v-else>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
-
+import { defineComponent, computed } from "vue";
+import { useRoute } from "vue-router";
 export default defineComponent({
   setup() {
-    const aa = ref(1);
-    return { aa };
+    const route = useRoute();
+
+    const withHeader = computed(() => route.meta.withHeader);
+    return { withHeader };
   },
 });
 </script>
@@ -28,6 +37,27 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.page-title {
+  color: #fff;
+}
+/* .header {
+  background-color: black;
+  color: #fff;
+}
+
+.header {
+  background-color: black;
+} */
+.content-container {
+  background: #fff;
+  padding: 0 24px 24px 30px;
+  min-height: 85vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
   margin-top: 60px;
+  min-height: 85vh;
 }
 </style>
