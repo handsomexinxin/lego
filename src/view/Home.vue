@@ -42,7 +42,11 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style  scoped>
+.homepage-container {
+  width: 100%;
+  height: 100%;
+}
 .page-title {
   color: #fff;
 }

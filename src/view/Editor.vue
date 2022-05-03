@@ -1,50 +1,70 @@
 <template>
-  <div class="editor" id="editor-layout-main">
-    <!-- <a-layout :style="{ background: '#fff' }">
-      <a-layout-header class="header">
-        <div class="page-title" :style="{ color: '#fff' }">title</div>
-      </a-layout-header>
-    </a-layout> -->
-
-    <a-layout>
+  <div class="editor-container" id="editor-layout-main">
+    <a-layout class="layout-container">
       <a-layout-sider width="300" :style="{ background: 'yellow' }">
         <div class="sidebar-container">组件列表</div>
+        <ComponentList :list="defaultTextTemplates" @on-tem-click="addItem" />
       </a-layout-sider>
       <a-layout style="padding: 0 24px">
         <a-layout-content class="preview-container">
           <p>画布区域</p>
-          <div class="preview-list" id="canvas-area"></div>
+          <div class="preview-list" id="canvas-area">
+            <component
+              v-for="component in components"
+              :key="component.id"
+              :is="component.name"
+              @click="delItem(component)"
+              v-bind="component.props"
+            />
+            <br />
+          </div>
         </a-layout-content>
       </a-layout>
       <a-layout-sider
         width="300"
         style="background: purple"
         class="settings-panel"
-        >组件属性</a-layout-sider
       >
+        组件属性
+      </a-layout-sider>
     </a-layout>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import ComponentList from "@/components/ComponentList.vue";
+import LText from "@/components/LText.vue";
+import { TextComponentProps } from "@/defaultProps";
+import { GlobalDataProps } from "@/store";
+import { ComponentData } from "@/store/editor";
+import { computed, defineComponent } from "vue";
+import { useStore } from "vuex";
+import { defaultTextTemplates } from "../defaultTemplates";
 export default defineComponent({
   name: "TemplateDetail",
+  components: { LText, ComponentList },
+  setup() {
+    const store = useStore<GlobalDataProps>();
+    const components = computed(() => {
+      return store.state.editor.components;
+    });
+    const addItem = (props: Partial<TextComponentProps>) => {
+      store.commit("addComponent", props);
+    };
+    const delItem = (props: ComponentData) => {
+      store.commit("delComponent", props);
+    };
+    return { components, defaultTextTemplates, addItem, delItem };
+  },
 });
 </script>
-<style>
-.header {
-  display: flex;
-  justify-content: space-between;
+<style  scoped>
+.editor-container {
+  width: 100%;
+  height: 100%;
 }
-.header .logo-img {
-  margin-right: 20px;
-  height: 40px;
-}
-.page-title {
-  display: flex;
-}
-.header h4 {
-  color: #ffffff;
+.layout-container {
+  width: 100%;
+  height: 100%;
 }
 .editor-spinner {
   position: fixed;

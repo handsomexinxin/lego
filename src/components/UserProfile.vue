@@ -64,7 +64,7 @@ export default defineComponent({
   },
 });
 </script>
-<style>
+<style  scoped>
 .user-profile-dropdown {
   border-radius: 2px !important;
 }
