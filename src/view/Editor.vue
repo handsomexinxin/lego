@@ -1,38 +1,54 @@
 <template>
   <div class="editor-container" id="editor-layout-main">
     <a-layout class="layout-container">
-      <a-layout-sider width="300" :style="{ background: 'yellow' }">
+      <a-layout-sider width="300" :style="{ background: '#fff' }">
         <div class="sidebar-container">组件列表</div>
-        <ComponentList :list="defaultTextTemplates" @on-tem-click="addItem" />
+        <component-list :list="defaultTextTemplates" @on-tem-click="addItem" />
       </a-layout-sider>
       <a-layout style="padding: 0 24px">
         <a-layout-content class="preview-container">
           <p>画布区域</p>
           <div class="preview-list" id="canvas-area">
-            <component
+            <editor-wrapper
               v-for="component in components"
+              :id="component.id"
               :key="component.id"
-              :is="component.name"
-              @click="delItem(component)"
-              v-bind="component.props"
-            />
+              @setActive="setActive"
+              :active="component.id === currentElement?.id"
+            >
+              <!-- @click="delItem(component)" -->
+              <component
+                :is="component.name"
+                v-bind="component.props"
+              ></component>
+            </editor-wrapper>
             <br />
           </div>
         </a-layout-content>
       </a-layout>
       <a-layout-sider
         width="300"
-        style="background: purple"
+        style="background: #fff"
         class="settings-panel"
       >
         组件属性
+        <PropsTable
+          v-if="currentElement?.props"
+          :props="currentElement.props"
+          @change="handleChange"
+        />
+        <pre>
+          {{ currentElement?.props }}
+        </pre>
       </a-layout-sider>
     </a-layout>
   </div>
 </template>
 <script lang="ts">
 import ComponentList from "@/components/ComponentList.vue";
+import EditorWrapper from "@/components/EditorWrapper.vue";
 import LText from "@/components/LText.vue";
+import PropsTable from "@/components/PropsTable.vue";
 import { TextComponentProps } from "@/defaultProps";
 import { GlobalDataProps } from "@/store";
 import { ComponentData } from "@/store/editor";
@@ -41,19 +57,37 @@ import { useStore } from "vuex";
 import { defaultTextTemplates } from "../defaultTemplates";
 export default defineComponent({
   name: "TemplateDetail",
-  components: { LText, ComponentList },
+  components: { LText, ComponentList, EditorWrapper, PropsTable },
   setup() {
     const store = useStore<GlobalDataProps>();
-    const components = computed(() => {
-      return store.state.editor.components;
-    });
+    const components = computed(() => store.state.editor.components);
+    const currentElement = computed<ComponentData | null>(
+      () => store.getters.getCurrentElement
+    );
     const addItem = (props: Partial<TextComponentProps>) => {
       store.commit("addComponent", props);
     };
     const delItem = (props: ComponentData) => {
       store.commit("delComponent", props);
     };
-    return { components, defaultTextTemplates, addItem, delItem };
+    const setActive = (id: string) => {
+      store.commit("setActive", id);
+    };
+    const handleChange = (e: {
+      key: keyof TextComponentProps;
+      value: unknown;
+    }) => {
+      store.commit("updateCurrentComponent", e);
+    };
+    return {
+      components,
+      defaultTextTemplates,
+      addItem,
+      delItem,
+      setActive,
+      handleChange,
+      currentElement,
+    };
   },
 });
 </script>

@@ -29,6 +29,7 @@ export type CommonDefaultProps = typeof commonDefaultProps;
 
 export const textDefaultProps = {
     // basic props - font styles
+    text: "",
     fontSize: "14px",
     fontFamily: "",
     fontWeight: "normal",

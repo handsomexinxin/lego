@@ -23,12 +23,6 @@ const defaultProps = transformToComponentProps(textDefaultProps);
 export default defineComponent({
   name: "",
   props: {
-    text: {
-      type: String,
-    },
-    // fontSize: {
-    //   type: String,
-    // },
     tag: {
       type: String,
       default: "div",

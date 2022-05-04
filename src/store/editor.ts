@@ -16,15 +16,20 @@ export interface EditorProps {
 }
 
 export const testComponents: ComponentData[] = [
-    {id: uuidv4(), name: "l-text", props: {text: "hello", fontSize: "14px", color: "red"}},
-    {id: uuidv4(), name: "l-text", props: {text: "hello2", fontSize: "18px", fontWeight: "bold"}},
-    {id: uuidv4(), name: "l-text", props: {text: "hello3", fontSize: "20px"}},
+    {id: uuidv4(), name: "l-text", props: {text: "hello", fontSize: "14px", color: "red", lineHeight: "1"}},
+    {id: uuidv4(), name: "l-text", props: {text: "hello2", fontSize: "18px", fontWeight: "bold", lineHeight: "2"}},
+    {id: uuidv4(), name: "l-text", props: {text: "hello3", fontSize: "20px", textAlign: "left", fontFamily: "\"SimSun\",\"STSong\""}},
 ];
 
 const editor: Module<EditorProps, GlobalDataProps> = {
     state: {
         components: testComponents,
         currentElement: ""
+    },
+    getters: {
+        getCurrentElement(state) {
+            return state.components.find((item) => item.id === state.currentElement);
+        }
     },
     mutations: {
         addComponent(state, props: Partial<TextComponentProps>) {
@@ -37,7 +42,15 @@ const editor: Module<EditorProps, GlobalDataProps> = {
         },
         delComponent(state, props: ComponentData) {
             state.components = state.components.filter((item) => item.id !== props.id);
-
+        },
+        setActive(state, id: string) {
+            state.currentElement = id;
+        },
+        updateCurrentComponent(state, {key, value}) {
+            const updateComponent = state.components.find((item) => item.id === state.currentElement);
+            if (updateComponent !== undefined) {
+                updateComponent.props[key as keyof TextComponentProps] = value;
+            }
         }
     }
 };

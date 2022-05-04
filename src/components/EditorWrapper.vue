@@ -1,5 +1,9 @@
 <template>
-  <div class="edit-wrapper" @click="onHandleClick(id)">
+  <div
+    class="edit-wrapper"
+    @click="onHandleClick(id)"
+    :class="{ active: active }"
+  >
     <slot></slot>
   </div>
 </template>
@@ -13,6 +17,10 @@ export default defineComponent({
     id: {
       type: String,
       required: true,
+    },
+    active: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ["set-active"],
@@ -31,5 +39,13 @@ export default defineComponent({
   cursor: pointer;
   border: 1px solid transparent;
   user-select: none;
+}
+.edit-wrapper:hover {
+  border: 1px solid #ccc;
+}
+.edit-wrapper.active {
+  border: 1px solid #1890ff;
+  user-select: none;
+  z-index: 1500;
 }
 </style>
