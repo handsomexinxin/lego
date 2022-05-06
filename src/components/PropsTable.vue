@@ -33,6 +33,7 @@ import RenderVNode from "@/utils/RenderVNode";
 import { computed, defineComponent, PropType, VNode } from "vue";
 import { reduce } from "lodash-es";
 import { mapPropsToFrom } from "@/propsMap";
+import ColorPicker from "./ColorPicker.vue";
 
 interface FormProps {
   component: string;
@@ -52,7 +53,7 @@ interface FormProps {
 
 export default defineComponent({
   name: "props-table",
-  components: { RenderVNode },
+  components: { RenderVNode, ColorPicker },
   props: {
     props: {
       type: Object as PropType<TextComponentProps>,

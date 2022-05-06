@@ -58,6 +58,10 @@ export const mapPropsToFrom: PropsToFrom = {
     },
     afterTransform: (e: any) => e.target.value
   },
+  color: {
+    component: "color-picker",
+    text: "字体颜色",
+  },
   fontSize: {
     component: "a-input-number",
     text: "字号",
