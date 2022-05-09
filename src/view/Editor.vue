@@ -38,7 +38,12 @@
           @change="handleChange"
         />
       </a-layout-sider>
-      <uploader action="http://jsonplaceholder.typicode.com/posts" />
+      <uploader
+        action="http://jsonplaceholder.typicode.com/posts"
+        :accept="'image/*'"
+        :auto-upload="false"
+        :drag="true"
+      />
     </a-layout>
   </div>
 </template>
