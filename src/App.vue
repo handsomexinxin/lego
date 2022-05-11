@@ -8,6 +8,7 @@
       </a-layout-header>
       <a-layout-content class="home-layout">
         <router-view></router-view>
+        <!-- <hello-world></hello-world> -->
       </a-layout-content>
       <a-layout-footer> Footer </a-layout-footer>
     </a-layout>
@@ -18,11 +19,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import {
+  defineComponent,
+  computed,
+  onMounted,
+  getCurrentInstance,
+  inject,
+} from "vue";
 import { useRoute } from "vue-router";
 export default defineComponent({
   setup() {
     const route = useRoute();
+    console.log("inject", inject("test"));
+    onMounted(() => {
+      getCurrentInstance()?.appContext.config.globalProperties.$echo();
+    });
 
     const withHeader = computed(() => route.meta.withHeader);
     return { withHeader };
