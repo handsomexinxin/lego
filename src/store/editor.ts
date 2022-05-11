@@ -1,10 +1,10 @@
 import {Module} from "vuex";
 import {GlobalDataProps} from "./index";
 import {v4 as uuidv4} from "uuid";
-import {TextComponentProps} from "@/defaultProps";
+import {ImageComponentProps, TextComponentProps} from "@/defaultProps";
 
 export interface ComponentData {
-    props: {[key: string]: unknown};
+    props: Partial<TextComponentProps> & Partial<ImageComponentProps>;
     id: string;
     // 业务组件名称 l-text l-image
     name: string;
@@ -32,13 +32,13 @@ const editor: Module<EditorProps, GlobalDataProps> = {
         }
     },
     mutations: {
-        addComponent(state, props: Partial<TextComponentProps>) {
-            const newComponent: ComponentData = {
-                id: uuidv4(),
-                name: "l-text",
-                props
-            };
-            state.components.push(newComponent);
+        addComponent(state, component: ComponentData) {
+            // const newComponent: ComponentData = {
+            //     id: uuidv4(),
+            //     name: "l-text",
+            //     props
+            // };
+            state.components.push(component);
         },
         delComponent(state, props: ComponentData) {
             state.components = state.components.filter((item) => item.id !== props.id);

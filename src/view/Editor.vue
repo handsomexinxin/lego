@@ -3,7 +3,10 @@
     <a-layout class="layout-container">
       <a-layout-sider width="300" :style="{ background: '#fff' }">
         <div class="sidebar-container">组件列表</div>
-        <component-list :list="defaultTextTemplates" @on-tem-click="addItem" />
+        <component-list
+          :list="defaultTextTemplates"
+          @on-tem-click="addComponent"
+        />
       </a-layout-sider>
       <a-layout style="padding: 0 24px">
         <a-layout-content class="preview-container">
@@ -38,12 +41,12 @@
           @change="handleChange"
         />
       </a-layout-sider>
-      <uploader
+      <!-- <uploader
         action="http://jsonplaceholder.typicode.com/posts"
         :accept="'image/*'"
-        :auto-upload="false"
+        :auto-upload="true"
         :drag="true"
-      />
+      /> -->
     </a-layout>
   </div>
 </template>
@@ -51,8 +54,9 @@
 import ComponentList from "@/components/ComponentList.vue";
 import EditorWrapper from "@/components/EditorWrapper.vue";
 import LText from "@/components/LText.vue";
+import LImage from "@/components/LImage.vue";
+
 import PropsTable from "@/components/PropsTable.vue";
-import Uploader from "@/components/Uploader.vue";
 import { TextComponentProps } from "@/defaultProps";
 import { GlobalDataProps } from "@/store";
 import { ComponentData } from "@/store/editor";
@@ -61,14 +65,14 @@ import { useStore } from "vuex";
 import { defaultTextTemplates } from "../defaultTemplates";
 export default defineComponent({
   name: "TemplateDetail",
-  components: { LText, ComponentList, EditorWrapper, PropsTable, Uploader },
+  components: { LText, ComponentList, EditorWrapper, PropsTable, LImage },
   setup() {
     const store = useStore<GlobalDataProps>();
     const components = computed(() => store.state.editor.components);
     const currentElement = computed<ComponentData | null>(
       () => store.getters.getCurrentElement
     );
-    const addItem = (props: Partial<TextComponentProps>) => {
+    const addComponent = (props: TextComponentProps) => {
       store.commit("addComponent", props);
     };
     const delItem = (props: ComponentData) => {
@@ -86,7 +90,7 @@ export default defineComponent({
     return {
       components,
       defaultTextTemplates,
-      addItem,
+      addComponent,
       delItem,
       setActive,
       handleChange,

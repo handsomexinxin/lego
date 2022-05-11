@@ -1,5 +1,6 @@
 import {mapValues, without} from "lodash-es";
 
+export const maxWidth = 373;
 export const commonDefaultProps = {
     actionType: "",
     url: "",
@@ -42,17 +43,34 @@ export const textDefaultProps = {
     ...commonDefaultProps,
     width: "318px"
 };
+export const imageDefaultProps = {
+    // basic props - font styles
+    src: "test.url",
+    ...commonDefaultProps,
+    width: "100%",
+    height: "100%",
+    zIndex: "-1"
+};
 
 export type TextComponentProps = typeof textDefaultProps;
+export type ImageComponentProps = typeof imageDefaultProps;
 
+const isEditingProp = {
+    isEditing: {
+        type: Boolean,
+        default: false
+    }
+};
 
-export const transformToComponentProps = (props: TextComponentProps) => {
-    return mapValues(props, (item) => {
+export const transformToComponentProps = <T extends {}>(props: T) => {
+    const mapProps = mapValues(props, (item) => {
         return {
-            type: item.constructor as StringConstructor,
+            type: (item as any).constructor as StringConstructor,
             default: item
         };
     });
+    return {...mapProps, ...isEditingProp};
 };
 
 export const textStylePropNames = without(Object.keys(textDefaultProps), "actionType", "url", "text");
+export const imageStylePropNames = without(Object.keys(imageDefaultProps), "actionType", "url", "text");

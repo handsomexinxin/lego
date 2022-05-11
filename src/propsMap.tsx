@@ -70,6 +70,22 @@ export const mapPropsToFrom: PropsToFrom = {
     },
     afterTransform: (e: number) => e ? `${e}px` : ""
   },
+  width: {
+    component: "a-input-number",
+    text: "宽度",
+    initialTransform: (value: string) => {
+      return parseInt(value);
+    },
+    afterTransform: (e: number) => e ? `${e}px` : ""
+  },
+  height: {
+    component: "a-input-number",
+    text: "高度",
+    initialTransform: (value: string) => {
+      return parseInt(value);
+    },
+    afterTransform: (e: number) => e ? `${e}px` : ""
+  },
   lineHeight: {
     component: "a-slider",
     text: "行高",

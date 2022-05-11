@@ -22,5 +22,13 @@ export const defaultTextTemplates = [
         width: "100px",
         height: "30px",
         tag: "button"
+    },
+    {
+        text: "上传图片",
+        color: "#fff",
+        backgroundColor: "#1980ff",
+        width: "100px",
+        height: "30px",
+        tag: "styled-uploader"
     }
 ];

@@ -1,8 +1,8 @@
 <template>
   <div class="file-upload">
+    <!-- class="upload-area" -->
     <div
-      class="upload-area"
-      :class="{ 'is-dragover': isDragOver }"
+      :class="{ 'is-dragover': isDragOver, 'upload-area': isDragOver }"
       v-on="events"
     >
       <slot v-if="isUploading" name="loading">
@@ -10,7 +10,7 @@
       </slot>
       <slot
         name="uploaded"
-        v-if="lastFileData && lastFileData.loaded"
+        v-else-if="lastFileData && lastFileData.loaded"
         :uploadedDate="lastFileData.data"
       >
         <button>点击上传</button>
@@ -28,12 +28,18 @@
       :multiple="multiple"
       :accept="accept"
     />
-    <ui class="upload-list">
+    <ui class="upload-list" v-if="showUploaderList">
       <li
         v-for="file in fileList"
         :key="file.id"
         :class="`uploaded-file upload-${file.status}`"
       >
+        <img
+          v-if="file.url"
+          :src="file.url"
+          class="upload-list-thumbnail"
+          :alt="file.name"
+        />
         <span class="filename">{{ file.name }}</span>
         <FileOutlined />
         <LoadingOutlined v-if="file.status === 'loading'" />
@@ -57,7 +63,8 @@ import {
   FileOutlined,
 } from "@ant-design/icons-vue";
 type UploadStatus = "ready" | "loading" | "success" | "error";
-type CheckUpload = (ile: File) => boolean | Promise<File>;
+type CheckUpload = (file: File) => boolean | Promise<File>;
+type FileListType = "picture" | "text";
 
 export interface UploadFile {
   id: string;
@@ -67,8 +74,8 @@ export interface UploadFile {
   raw: File;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resp?: any;
+  url?: string;
 }
-
 export default defineComponent({
   name: "upload",
   props: {
@@ -78,17 +85,6 @@ export default defineComponent({
     },
     beforeUpload: {
       type: Function as PropType<CheckUpload>,
-    },
-    onSuccess: {
-      type: Function,
-    },
-    onError: {
-      type: Function,
-    },
-    onProgress: {
-      type: Function as PropType<
-        (val: { progress: number; fileObj: UploadFile }) => void
-      >,
     },
     headers: {
       type: Object as PropType<Record<string, string>>,
@@ -119,9 +115,18 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    showUploaderList: {
+      type: Boolean,
+      default: true,
+    },
+    listType: {
+      type: String as PropType<FileListType>,
+      default: "text",
+    },
   },
   components: { DeleteOutlined, LoadingOutlined, FileOutlined },
-  setup(props) {
+  emits: ["success", "onError", "onProgress"],
+  setup(props, context) {
     const fileInput = ref<null | HTMLInputElement>(null);
     const fileList = ref<UploadFile[]>([]);
     const isDragOver = ref(false);
@@ -160,14 +165,14 @@ export default defineComponent({
       readyFile.status = "loading";
 
       axios
-        .post(props.action, formData, {
+        .get(props.action, {
           withCredentials: props.withCredentials,
           headers: {
             "Content-Type": "multipart/form/data",
             ...props.headers,
           },
           onUploadProgress: (progressEvent) => {
-            props.onProgress?.({
+            context.emit("onProgress", {
               progress: (progressEvent.loaded / progressEvent.total) * 100,
               fileObj: readyFile,
             });
@@ -176,11 +181,14 @@ export default defineComponent({
         .then((resp) => {
           readyFile.status = "success";
           readyFile.resp = resp.data;
-          props.onSuccess?.();
+
+          context.emit("success", resp.data);
         })
         .catch(() => {
+          console.log("catch");
+
           readyFile.status = "error";
-          props.onError?.();
+          context.emit("onError");
         });
     };
     const addFileToList = (uploadFile: File) => {
@@ -191,6 +199,23 @@ export default defineComponent({
         status: "ready",
         raw: uploadFile,
       });
+
+      if (props.listType === "picture") {
+        try {
+          // 同步
+          // 这种方式一直存在于document内，清除方式只有upload() 或者revokeObjectURL()手动清除  性能优秀
+          fileObj.url = URL.createObjectURL(uploadFile);
+          // 异步  bse64方式
+          const fileReady = new FileReader();
+          fileReady.readAsDataURL(uploadFile);
+          fileReady.addEventListener("load", () => {
+            fileObj.url = fileReady.result as string;
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
       fileList.value.push(fileObj);
       if (props.autoUpload) {
         postFile(fileObj);
@@ -246,8 +271,6 @@ export default defineComponent({
     };
 
     const handleDrag = (e: DragEvent, over: boolean) => {
-      console.log(handleDrag, over);
-
       e.preventDefault();
       isDragOver.value = over;
     };
@@ -269,7 +292,6 @@ export default defineComponent({
       };
       events.drop = handleDrop;
     }
-    console.log(events, props.drag);
 
     return {
       fileInput,
@@ -306,6 +328,8 @@ export default defineComponent({
   position: relative;
   &:first-child {
     margin-top: 10px;
+  }
+  .upload-list-thumbnail {
   }
   .file-icon {
     svg: {
