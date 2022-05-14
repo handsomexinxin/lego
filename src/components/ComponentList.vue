@@ -24,7 +24,7 @@ import { ComponentData } from "@/store/editor";
 import { message } from "ant-design-vue";
 import { v4 as uuidv4 } from "uuid";
 import { defineComponent, PropType } from "vue";
-import LText from "./LText.vue";
+// import LText from "./LTextx.vue";
 import StyledUploader from "./StyledUploader.vue";
 
 export default defineComponent({
@@ -37,7 +37,7 @@ export default defineComponent({
   },
   emits: ["on-tem-click"],
   components: {
-    LText,
+    // LText,
     StyledUploader,
   },
   setup(props, context) {

@@ -53,7 +53,7 @@
 <script lang="ts">
 import ComponentList from "@/components/ComponentList.vue";
 import EditorWrapper from "@/components/EditorWrapper.vue";
-import LText from "@/components/LText.vue";
+// import LText from "@/components/LTextx.vue";
 import LImage from "@/components/LImage.vue";
 
 import PropsTable from "@/components/PropsTable.vue";
@@ -65,7 +65,7 @@ import { useStore } from "vuex";
 import { defaultTextTemplates } from "../defaultTemplates";
 export default defineComponent({
   name: "TemplateDetail",
-  components: { LText, ComponentList, EditorWrapper, PropsTable, LImage },
+  components: { ComponentList, EditorWrapper, PropsTable, LImage },
   setup() {
     const store = useStore<GlobalDataProps>();
     const components = computed(() => store.state.editor.components);

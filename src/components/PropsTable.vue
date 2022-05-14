@@ -1,6 +1,9 @@
 <template>
   <div class="props-table">
     <div v-for="(value, key) in finalProps" :key="key" class="prop-item">
+      <!-- <pre>
+        {{ finalProps.color }}
+      </pre> -->
       <span class="label" v-if="value?.text">{{ value.text }}</span>
       <div class="prop-component">
         <component

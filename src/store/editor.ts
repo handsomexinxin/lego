@@ -16,7 +16,7 @@ export interface EditorProps {
 }
 
 export const testComponents: ComponentData[] = [
-    {id: uuidv4(), name: "l-text", props: {text: "hello", fontSize: "14px", color: "red", lineHeight: "1"}},
+    {id: uuidv4(), name: "l-text", props: {text: "hello", fontSize: "14px", color: "#1890ff", lineHeight: "2"}},
     {id: uuidv4(), name: "l-text", props: {text: "hello2", fontSize: "18px", fontWeight: "bold", lineHeight: "2"}},
     {id: uuidv4(), name: "l-text", props: {text: "hello3", fontSize: "20px", textAlign: "left", fontFamily: "\"SimSun\",\"STSong\""}},
 ];

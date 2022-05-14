@@ -10,7 +10,7 @@ module.exports = {
     "eslint:recommended",
     "@vue/typescript/recommended"
   ],
-
+  "ignorePatterns": ["**/*.js"],
   parserOptions: {
     ecmaVersion: 2020
   },

@@ -16,6 +16,7 @@
     "core-js": "^3.6.5",
     "lodash-es": "^4.17.21",
     "node-sass": "^7.0.1",
+    "puteng-component": "^1.0.1",
     "sass": "^1.32.7",
     "uuid": "^8.3.2",
     "vue": "^3.0.0",
