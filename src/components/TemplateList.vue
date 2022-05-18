@@ -57,7 +57,7 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style  scoped>
 .poster-item {
   position: relative;
   margin-bottom: 20px;

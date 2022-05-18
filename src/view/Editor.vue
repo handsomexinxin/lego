@@ -1,50 +1,112 @@
 <template>
-  <div class="editor" id="editor-layout-main">
-    <!-- <a-layout :style="{ background: '#fff' }">
-      <a-layout-header class="header">
-        <div class="page-title" :style="{ color: '#fff' }">title</div>
-      </a-layout-header>
-    </a-layout> -->
-
-    <a-layout>
-      <a-layout-sider width="300" :style="{ background: 'yellow' }">
+  <div class="editor-container" id="editor-layout-main">
+    <a-layout class="layout-container">
+      <a-layout-sider width="300" :style="{ background: '#fff' }">
         <div class="sidebar-container">组件列表</div>
+        <component-list
+          :list="defaultTextTemplates"
+          @on-tem-click="addComponent"
+        />
       </a-layout-sider>
       <a-layout style="padding: 0 24px">
         <a-layout-content class="preview-container">
           <p>画布区域</p>
-          <div class="preview-list" id="canvas-area"></div>
+          <div class="preview-list" id="canvas-area">
+            <editor-wrapper
+              v-for="component in components"
+              :id="component.id"
+              :key="component.id"
+              @setActive="setActive"
+              :active="component.id === currentElement?.id"
+            >
+              <!-- @click="delItem(component)" -->
+              <component
+                :is="component.name"
+                v-bind="component.props"
+              ></component>
+            </editor-wrapper>
+            <br />
+          </div>
         </a-layout-content>
       </a-layout>
       <a-layout-sider
         width="300"
-        style="background: purple"
+        style="background: #fff"
         class="settings-panel"
-        >组件属性</a-layout-sider
       >
+        组件属性
+        <PropsTable
+          v-if="currentElement?.props"
+          :props="currentElement.props"
+          @change="handleChange"
+        />
+      </a-layout-sider>
+      <!-- <uploader
+        action="http://jsonplaceholder.typicode.com/posts"
+        :accept="'image/*'"
+        :auto-upload="true"
+        :drag="true"
+      /> -->
     </a-layout>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import ComponentList from "@/components/ComponentList.vue";
+import EditorWrapper from "@/components/EditorWrapper.vue";
+// import LText from "@/components/LTextx.vue";
+import LImage from "@/components/LImage.vue";
+
+import PropsTable from "@/components/PropsTable.vue";
+import { TextComponentProps } from "@/defaultProps";
+import { GlobalDataProps } from "@/store";
+import { ComponentData } from "@/store/editor";
+import { computed, defineComponent } from "vue";
+import { useStore } from "vuex";
+import { defaultTextTemplates } from "../defaultTemplates";
 export default defineComponent({
   name: "TemplateDetail",
+  components: { ComponentList, EditorWrapper, PropsTable, LImage },
+  setup() {
+    const store = useStore<GlobalDataProps>();
+    const components = computed(() => store.state.editor.components);
+    const currentElement = computed<ComponentData | null>(
+      () => store.getters.getCurrentElement
+    );
+    const addComponent = (props: TextComponentProps) => {
+      store.commit("addComponent", props);
+    };
+    const delItem = (props: ComponentData) => {
+      store.commit("delComponent", props);
+    };
+    const setActive = (id: string) => {
+      store.commit("setActive", id);
+    };
+    const handleChange = (e: {
+      key: keyof TextComponentProps;
+      value: unknown;
+    }) => {
+      store.commit("updateCurrentComponent", e);
+    };
+    return {
+      components,
+      defaultTextTemplates,
+      addComponent,
+      delItem,
+      setActive,
+      handleChange,
+      currentElement,
+    };
+  },
 });
 </script>
-<style>
-.header {
-  display: flex;
-  justify-content: space-between;
+<style  scoped>
+.editor-container {
+  width: 100%;
+  height: 100%;
 }
-.header .logo-img {
-  margin-right: 20px;
-  height: 40px;
-}
-.page-title {
-  display: flex;
-}
-.header h4 {
-  color: #ffffff;
+.layout-container {
+  width: 100%;
+  height: 100%;
 }
 .editor-spinner {
   position: fixed;
